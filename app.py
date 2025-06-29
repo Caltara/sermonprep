@@ -118,11 +118,21 @@ with tab4:
         if series_theme:
             with st.spinner("Creating sermon series..."):
                 series_plan = generate_sermon_series(series_theme, weeks)
+
                 for sermon in series_plan:
-                    st.subheader(f"Week {sermon.get('week', '?')}: {sermon.get('title', 'No Title')}")
-                    st.write(f"**Summary:** {sermon.get('summary', 'No Summary')}")
+                    week_num = sermon.get("week", "?")
+                    title = sermon.get("title", "No Title")
+                    summary = sermon.get("summary", "No Summary")
                     verses = sermon.get("verses", [])
+
+                    st.markdown(f"### ✅ Week {week_num}: {title}")
+                    st.markdown(f"**Summary:** {summary}")
+
                     if verses:
-                        st.write(f"**Bible Verses:** {', '.join(verses)}")
+                        st.markdown("**Bible Verses:**")
+                        for verse in verses:
+                            st.markdown(f"- {verse}")
+
+                    st.markdown("---")
         else:
             st.warning("Please enter a series theme.")
