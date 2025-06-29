@@ -2,6 +2,7 @@ import streamlit as st
 from generators.sermon_generator import generate_sermon
 from generators.study_generator import generate_bible_study
 from generators.outline_generator import generate_teaching_outline
+from generators.series_generator import generate_sermon_series
 from utils.export import export_to_pdf, export_to_docx
 
 # -------------- LOGIN SYSTEM (FREE-TIER COMPATIBLE) --------------
@@ -37,9 +38,14 @@ if not check_password():
 
 st.set_page_config(page_title="AI Sermon Assistant", layout="centered")
 st.title("📖✍️ AI Sermon Assistant for Pastors")
-st.caption("Generate sermons, outlines, and Bible studies with AI ✝️")
+st.caption("Generate sermons, outlines, Bible studies, and sermon series with AI ✝️")
 
-tab1, tab2, tab3 = st.tabs(["Sermon Generator", "Bible Study", "Teaching Outline"])
+tab1, tab2, tab3, tab4 = st.tabs([
+    "Sermon Generator",
+    "Bible Study",
+    "Teaching Outline",
+    "Sermon Series Planner"
+])
 
 with tab1:
     st.header("✝️ Sermon Generator")
@@ -94,3 +100,20 @@ with tab3:
                     st.download_button("⬇️ Export as Word (.docx)", export_to_docx(subject, outline), file_name=f"{subject}.docx")
         else:
             st.warning("Please enter a subject and idea.")
+
+with tab4:
+    st.header("📅 Sermon Series Planner")
+    series_theme = st.text_input("Enter Series Theme or Title")
+    weeks = st.slider("Number of Weeks", min_value=3, max_value=8, value=5)
+    if st.button("Generate Series"):
+        if series_theme:
+            with st.spinner("Creating sermon series..."):
+                series_plan = generate_sermon_series(series_theme, weeks)
+                for i, sermon in enumerate(series_plan, 1):
+                    st.subheader(f"Week {i}: {sermon.get('title', 'No Title')}")
+                    st.write(f"**Summary:** {sermon.get('summary', 'No Summary')}")
+                    verses = sermon.get("verses", [])
+                    if verses:
+                        st.write(f"**Bible Verses:** {', '.join(verses)}")
+        else:
+            st.warning("Please enter a series theme.")
