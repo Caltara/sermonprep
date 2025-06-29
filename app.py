@@ -2,6 +2,7 @@ import streamlit as st
 from generators.sermon_generator import generate_sermon
 from generators.study_generator import generate_bible_study
 from generators.outline_generator import generate_teaching_outline
+from utils.export import export_to_pdf, export_to_docx
 
 # -------------- LOGIN SYSTEM (FREE-TIER COMPATIBLE) --------------
 
@@ -12,7 +13,7 @@ def check_password():
     if st.session_state.authenticated:
         return True
 
-    st.set_page_config(page_title="AI Sermon Assistant", layout="centered")
+    st.set_page_config(page_title="AI Sermon Assistant Login", layout="centered")
     st.title("🔐 AI Sermon Assistant Login")
     st.write("Please log in to access the sermon tools.")
 
@@ -49,6 +50,12 @@ with tab1:
             with st.spinner("Preparing sermon..."):
                 sermon = generate_sermon(title, summary)
                 st.markdown(sermon)
+
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.download_button("⬇️ Export as PDF", export_to_pdf(title, sermon), file_name=f"{title}.pdf")
+                with col2:
+                    st.download_button("⬇️ Export as Word (.docx)", export_to_docx(title, sermon), file_name=f"{title}.docx")
         else:
             st.warning("Please enter a title and summary.")
 
@@ -61,6 +68,12 @@ with tab2:
             with st.spinner("Creating study..."):
                 study = generate_bible_study(topic, notes)
                 st.markdown(study)
+
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.download_button("⬇️ Export as PDF", export_to_pdf(topic, study), file_name=f"{topic}.pdf")
+                with col2:
+                    st.download_button("⬇️ Export as Word (.docx)", export_to_docx(topic, study), file_name=f"{topic}.docx")
         else:
             st.warning("Please enter a topic and summary.")
 
@@ -73,5 +86,11 @@ with tab3:
             with st.spinner("Building outline..."):
                 outline = generate_teaching_outline(subject, idea)
                 st.markdown(outline)
+
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.download_button("⬇️ Export as PDF", export_to_pdf(subject, outline), file_name=f"{subject}.pdf")
+                with col2:
+                    st.download_button("⬇️ Export as Word (.docx)", export_to_docx(subject, outline), file_name=f"{subject}.docx")
         else:
             st.warning("Please enter a subject and idea.")
