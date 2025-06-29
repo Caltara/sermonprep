@@ -4,7 +4,16 @@ from generators.study_generator import generate_bible_study
 from generators.outline_generator import generate_teaching_outline
 
 st.set_page_config(page_title="AI Sermon Assistant", layout="centered")
+
+# ✅ Check for logged-in user
+if not st.experimental_user:
+    st.warning("🔒 Please log in to use the AI Sermon Assistant.")
+    st.stop()
+
+user_email = st.experimental_user["email"]  # capture email for future saved sermons
+
 st.title("📖✍️ AI Sermon Assistant for Pastors")
+st.caption(f"👤 Logged in as: {user_email}")
 
 tab1, tab2, tab3 = st.tabs(["Sermon Generator", "Bible Study", "Teaching Outline"])
 
