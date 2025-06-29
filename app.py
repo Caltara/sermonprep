@@ -3,7 +3,7 @@ from generators.sermon_generator import generate_sermon
 from generators.study_generator import generate_bible_study
 from generators.outline_generator import generate_teaching_outline
 
-# -------------- LOGIN SYSTEM (FOR COMMUNITY TIER) --------------
+# -------------- LOGIN SYSTEM (FREE-TIER COMPATIBLE) --------------
 
 def check_password():
     if "authenticated" not in st.session_state:
@@ -12,24 +12,22 @@ def check_password():
     if st.session_state.authenticated:
         return True
 
-    with st.form("login_form"):
-        st.title("🔐 AI Sermon Assistant Login")
-        st.write("Please log in to access sermon tools.")
-        email = st.text_input("Email")
-        password = st.text_input("Password", type="password")
-        submit = st.form_submit_button("Login")
+    st.set_page_config(page_title="AI Sermon Assistant", layout="centered")
+    st.title("🔐 AI Sermon Assistant Login")
+    st.write("Please log in to access the sermon tools.")
 
-        if submit:
-            if (
-                email == st.secrets["USER_EMAIL"]
-                and password == st.secrets["USER_PASSWORD"]
-            ):
-                st.session_state.authenticated = True
-                st.experimental_rerun()
-            else:
-                st.error("❌ Invalid email or password.")
-    return False
+    email = st.text_input("Email")
+    password = st.text_input("Password", type="password")
 
+    if st.button("Login"):
+        if email == st.secrets["USER_EMAIL"] and password == st.secrets["USER_PASSWORD"]:
+            st.session_state.authenticated = True
+            st.success("✅ Login successful! Please rerun the app using the 🔁 button.")
+        else:
+            st.error("❌ Invalid email or password.")
+        st.stop()  # Stop whether success or fail
+
+    st.stop()  # Prevent app from continuing until login is done
 
 if not check_password():
     st.stop()
