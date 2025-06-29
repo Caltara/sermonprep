@@ -3,17 +3,42 @@ from generators.sermon_generator import generate_sermon
 from generators.study_generator import generate_bible_study
 from generators.outline_generator import generate_teaching_outline
 
-st.set_page_config(page_title="AI Sermon Assistant", layout="centered")
+# -------------- LOGIN SYSTEM (FOR COMMUNITY TIER) --------------
 
-# ✅ Check for logged-in user
-if not st.experimental_user:
-    st.warning("🔒 Please log in to use the AI Sermon Assistant.")
+def check_password():
+    if "authenticated" not in st.session_state:
+        st.session_state.authenticated = False
+
+    if st.session_state.authenticated:
+        return True
+
+    with st.form("login_form"):
+        st.title("🔐 AI Sermon Assistant Login")
+        st.write("Please log in to access sermon tools.")
+        email = st.text_input("Email")
+        password = st.text_input("Password", type="password")
+        submit = st.form_submit_button("Login")
+
+        if submit:
+            if (
+                email == st.secrets["USER_EMAIL"]
+                and password == st.secrets["USER_PASSWORD"]
+            ):
+                st.session_state.authenticated = True
+                st.experimental_rerun()
+            else:
+                st.error("❌ Invalid email or password.")
+    return False
+
+
+if not check_password():
     st.stop()
 
-user_email = st.experimental_user["email"]  # capture email for future saved sermons
+# -------------- MAIN APP --------------
 
+st.set_page_config(page_title="AI Sermon Assistant", layout="centered")
 st.title("📖✍️ AI Sermon Assistant for Pastors")
-st.caption(f"👤 Logged in as: {user_email}")
+st.caption("Generate sermons, outlines, and Bible studies with AI ✝️")
 
 tab1, tab2, tab3 = st.tabs(["Sermon Generator", "Bible Study", "Teaching Outline"])
 
